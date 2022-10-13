@@ -22,3 +22,15 @@ Support is provided through the user mailing list.  Mail
 questions or bug reports to:
 
   mybatis-user@googlegroups.com
+
+## 魔改请查询以下链接资料
+---
+源码基于1.4.1 Git 路径   https://github.com/mybatis/generator/releases/tag/mybatis-generator-1.4.1
+
+(Mybatis-generator修改源代码实现自定义方法,返回List对象 1 ) https://blog.csdn.net/hji7365039/article/details/76273012
+
+(Mybatis-generator修改源代码实现自定义方法,返回List对象 2 ) https://blog.csdn.net/hji7365039/article/details/77745632
+
+(Mybatis-generator修改源代码实现自定义方法,返回List对象 3 ) https://blog.csdn.net/hji7365039/article/details/77745874
+
+---
