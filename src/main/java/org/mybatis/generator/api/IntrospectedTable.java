@@ -97,6 +97,7 @@ public abstract class IntrospectedTable {
         ATTR_MYBATIS_DYNAMIC_SQL_SUPPORT_TYPE,
         ATTR_KOTLIN_RECORD_TYPE,
         ATTR_MYBATIS_DYNAMIC_SQL_TABLE_OBJECT_NAME
+        ,ATTR_SELECT_BY_ObJECT
     }
 
     protected TableConfiguration tableConfiguration;
@@ -400,6 +401,9 @@ public abstract class IntrospectedTable {
         context.getPlugins().initialized(this);
     }
 
+    /**
+     * 计算xml属性
+     */
     protected void calculateXmlAttributes() {
         setMyBatis3XmlMapperFileName(calculateMyBatis3XmlMapperFileName());
         setMyBatis3XmlMapperPackage(calculateSqlMapPackage());
@@ -430,6 +434,8 @@ public abstract class IntrospectedTable {
         setBaseColumnListId("Base_Column_List"); //$NON-NLS-1$
         setBlobColumnListId("Blob_Column_List"); //$NON-NLS-1$
         setMyBatis3UpdateByExampleWhereClauseId("Update_By_Example_Where_Clause"); //$NON-NLS-1$
+
+        setSelectByObject("selectByObject");
     }
 
     public void setBlobColumnListId(String s) {
@@ -653,6 +659,15 @@ public abstract class IntrospectedTable {
 
     public void setMyBatisDynamicSQLTableObjectName(String name) {
         internalAttributes.put(InternalAttribute.ATTR_MYBATIS_DYNAMIC_SQL_TABLE_OBJECT_NAME, name);
+    }
+
+    //自定义方法
+    public String getSelectByObject() {
+        return internalAttributes.get(InternalAttribute.ATTR_SELECT_BY_ObJECT);
+    }
+    //自定义方法
+    public void setSelectByObject(String s) {
+        internalAttributes.put(InternalAttribute.ATTR_SELECT_BY_ObJECT, s);
     }
 
     private boolean isSubPackagesEnabled(PropertyHolder propertyHolder) {

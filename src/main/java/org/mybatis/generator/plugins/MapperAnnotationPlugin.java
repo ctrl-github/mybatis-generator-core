@@ -15,6 +15,8 @@
  */
 package org.mybatis.generator.plugins;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.mybatis.generator.api.IntrospectedTable;
@@ -33,12 +35,26 @@ public class MapperAnnotationPlugin extends PluginAdapter {
     @Override
     public boolean clientGenerated(Interface interfaze, IntrospectedTable introspectedTable) {
 
-        if (introspectedTable.getTargetRuntime() == TargetRuntime.MYBATIS3) {
-            // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation
-            interfaze.addImportedType(
-                    new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper")); //$NON-NLS-1$
-            interfaze.addAnnotation("@Mapper"); //$NON-NLS-1$
+        // don't need to do this for MYBATIS3_DSQL as that runtime already adds this annotation
+        interfaze.addImportedType(
+                new FullyQualifiedJavaType("org.apache.ibatis.annotations.Mapper")); //$NON-NLS-1$
+        interfaze.addAnnotation("@Mapper"); //$NON-NLS-1$
+
+        String author = properties.getProperty("author");
+        String dateFormat = properties.getProperty("dateFormat", "yyyy-MM-dd");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
+
+        // 获取表注释
+        String remarks = introspectedTable.getRemarks();
+        interfaze.addJavaDocLine("/**");
+        if (null != remarks && !remarks.trim().equals("")) {
+            interfaze.addJavaDocLine(" * " + remarks);
+            interfaze.addJavaDocLine(" *");
         }
+
+        interfaze.addJavaDocLine(" * @author " + author);
+        interfaze.addJavaDocLine(" * @date " + dateFormatter.format(new Date()));
+        interfaze.addJavaDocLine(" */");
         return true;
     }
 }
