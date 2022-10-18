@@ -21,6 +21,8 @@ import org.mybatis.generator.api.dom.java.*;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
 import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.config.TableConfiguration;
+import org.mybatis.generator.internal.util.JavaBeansUtil;
 import org.mybatis.generator.internal.util.StringUtility;
 
 import java.text.SimpleDateFormat;
@@ -221,7 +223,15 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         if (actualColumnName.equals("ID")){
             sb.append("id");
         }else {
-            sb.append(captureName(actualColumnName));
+            TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
+            if (isTrue(tableConfiguration
+                    .getProperty(PropertyRegistry.TABLE_USE_ACTUAL_COLUMN_NAMES))) {
+                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
+            }else {
+                actualColumnName=
+                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+            }
+            sb.append(actualColumnName);
         }
 
         sb.append(" "+remarks);
@@ -246,30 +256,19 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         if (actualColumnName.equals("ID")){
             sb.append("id");
         }else {
-            sb.append(captureName(actualColumnName));
+            TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
+            if (isTrue(tableConfiguration
+                    .getProperty(PropertyRegistry.TABLE_USE_ACTUAL_COLUMN_NAMES))) {
+                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
+            } else {
+                actualColumnName=
+                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+            }
+            sb.append(actualColumnName);
         }
 //        sb.append(" "+remarks);
         method.addJavaDocLine(sb.toString());
         method.addJavaDocLine(" */"); //$NON-NLS-1$
-    }
-
-    public static String captureName(String name) {
-        //name = name.substring(0, 1).toLowerCase() + name.substring(1);
-        //return  name;
-
-        //进行字母的ascii编码前移活后移
-        char[] cs=name.toCharArray();
-        if(Character.isUpperCase(cs[0])){//如果是大写 处理 改小写
-            cs[0]+=32;
-        }else if(Character.isLowerCase(cs[0])){//如果是小写 不处理
-//                cs[0]-=32;
-        }
-        return String.valueOf(cs);
-
-    }
-
-    public static void main(String[] args) {
-        System.out.println(captureName("YctualColumnNames"));
     }
 
 }
