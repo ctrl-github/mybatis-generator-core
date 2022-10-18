@@ -9,19 +9,36 @@
     <!-- 一个数据库一个context -->
     <context id="default"  defaultModelType="flat" targetRuntime="MyBatis3">
 
-        <!--    重新生成代码,xml内容覆盖    -->
+        <!-- 生成的 Java 文件的编码 -->
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <!-- 格式化 Java 代码 -->
+        <property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter"/>
+        <!-- 格式化 XML 代码 -->
+        <property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter"/>
+
+        <!--  在DAO层接口文件  增加@Mapper注解 -->
+        <plugin type="org.mybatis.generator.plugins.MapperAnnotationPlugin" >
+            <property name="author" value="imacco"/>
+            <property name="dateFormat" value="yyyy/MM/dd"/>
+        </plugin>
+        <!-- 重新生成代码,xml内容覆盖 -->
         <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
-        <!-- 实体类生成序列化属性-->
+        <!-- 实体类生成序列化属性 -->
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
-        <!-- 实体类重写HashCode()和equals()-->
+        <!-- 实体类重写HashCode()和equals() -->
         <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
         <!-- 实体类重写toString() -->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <!-- 实体类使用链式赋值 setter -->
+        <plugin type="org.mybatis.generator.plugins.EntityChainPlugin"/>
 
         <!-- 在创建class时，对注释进行控制 -->
-        <commentGenerator>
-            <property name="suppressDate" value="false"/> <!-- 是否生成注释代时间戳 -->
-            <property name="suppressAllComments" value="true"/><!-- 是否取消注释 -->
+        <commentGenerator type="org.mybatis.generator.internal.MyCommentGenerator">
+            <property name="suppressAllComments" value="false"/><!-- 是否取消注释 -->
+            <property name="author" value="ctrl-github"/> <!-- java文件中作者名称 -->
+            <property name="xml-author" value=""/> <!-- xml文件中作者名称 -->
+            <property name="dateFormat" value="yyyy/MM/dd"/>
+            <property name="dateTimeFormat" value="true"/> <!-- 是否对时间字段进行格式化  默认不格式化 -->
         </commentGenerator>
 
         <!-- jdbc的数据库连接 -->
@@ -33,10 +50,11 @@
             <property name="useInformationSchema" value="true"/>
         </jdbcConnection>
 
-        <!-- 非必需，类型处理器，在数据库类型和java类型之间的转换控制-->
-        <javaTypeResolver>
             <!-- 是否使用bigDecimal， false可自动转化以下类型（Long, Integer, Short, etc.） -->
+        <!-- 非必需，类型处理器，在数据库类型和java类型之间的转换控制  type="generate.plugins.JavaTypeResolverTinyintToBooleanImpl"-->
+        <javaTypeResolver type="org.mybatis.generator.internal.types.MyJavaTypeResolver">
             <property name="forceBigDecimals" value="false"/>
+            <property name="useJSR310Types" value="false"/>
         </javaTypeResolver>
 
         <!-- 生成Domain(entity) 实体 模型：包名(targetPackage)、位置(targetProject) -->
@@ -62,13 +80,21 @@
         </javaClientGenerator>
 
         <!-- 设置数据库的表名和实体类名 -->
-        <table schema="" tableName="t_b_remarks" domainObjectName="SDSDSD"
+        <table schema="" tableName="t_User" domainObjectName="User"
                enableCountByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                enableUpdateByExample="false">
+            <!--
+            useActualColumnNames
+                true
+                    MyBatis Generator会使用数据库中实际的字段名字作为生成的实体类的属性名。
+                false
+                    这是默认值。如果设置为false,则MyBatis Generator会将数据库中实际的字段名字转换为Camel Case风格作为生成的实体类的属性名。
+            -->
+            <property name="useActualColumnNames" value="true" />
             <!-- generatedKey用于生成生成主键的方法  identity true  <selectKey order="AFTER"> / false  <selectKey order="BEFORE"> -->
-<!--            <generatedKey column="ID" sqlStatement="Mysql"  identity="true"/>-->
+            <generatedKey column="ID" sqlStatement="Mysql"  identity="true"/>
             <!-- 指定列的java数据类型 -->
             <columnOverride column="ID" property="id" javaType="Integer" />
         </table>

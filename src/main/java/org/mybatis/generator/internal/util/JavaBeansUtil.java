@@ -173,7 +173,8 @@ public class JavaBeansUtil {
             answer = inputString.toLowerCase(Locale.US);
         } else {
             if (Character.isUpperCase(inputString.charAt(0))
-                    && !Character.isUpperCase(inputString.charAt(1))) {
+                    //&& !Character.isUpperCase(inputString.charAt(1))
+                    ) {
                 answer = inputString.substring(0, 1).toLowerCase(Locale.US)
                         + inputString.substring(1);
             } else {
