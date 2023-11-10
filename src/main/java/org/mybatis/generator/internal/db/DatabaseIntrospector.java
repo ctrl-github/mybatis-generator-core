@@ -271,8 +271,16 @@ public class DatabaseIntrospector {
 
                 if (isTrue(tc
                         .getProperty(PropertyRegistry.TABLE_USE_ACTUAL_COLUMN_NAMES))) {
-                    introspectedColumn.setJavaProperty(
-                            JavaBeansUtil.getValidPropertyName(calculatedColumnName));
+                    boolean isazAZ = calculatedColumnName.matches("^[a-zA-Z]+$");
+                    boolean isAZ = calculatedColumnName.matches("^[A-Z]+$");
+                    //如果是字母 并且不是全大写的情况
+                    if (isazAZ && !isAZ){
+                        introspectedColumn.setJavaProperty(
+                                JavaBeansUtil.getValidPropertyName(calculatedColumnName));
+                    }else {//如果是下划线 并且是全大写的情况
+                        introspectedColumn.setJavaProperty(
+                                JavaBeansUtil.getCamelCaseString(calculatedColumnName, false));
+                    }
                 } else if (isTrue(tc
                                 .getProperty(PropertyRegistry.TABLE_USE_COMPOUND_PROPERTY_NAMES))) {
                     sb.setLength(0);
@@ -283,8 +291,16 @@ public class DatabaseIntrospector {
                     introspectedColumn.setJavaProperty(
                             JavaBeansUtil.getValidPropertyName(sb.toString()));
                 } else {
-                    introspectedColumn.setJavaProperty(
-                            JavaBeansUtil.getCamelCaseString(calculatedColumnName, false));
+                    boolean isazAZ = calculatedColumnName.matches("^[a-zA-Z]+$");
+                    boolean isAZ = calculatedColumnName.matches("^[A-Z]+$");
+                    //如果是字母 并且不是全大写的情况
+                    if (isazAZ && !isAZ){
+                        introspectedColumn.setJavaProperty(
+                                JavaBeansUtil.getValidPropertyName(calculatedColumnName));
+                    }else {//如果是下划线 并且是全大写的情况
+                        introspectedColumn.setJavaProperty(
+                                JavaBeansUtil.getCamelCaseString(calculatedColumnName, false));
+                    }
                 }
 
                 FullyQualifiedJavaType fullyQualifiedJavaType = javaTypeResolver

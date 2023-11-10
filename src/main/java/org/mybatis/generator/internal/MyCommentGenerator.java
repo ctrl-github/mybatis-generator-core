@@ -109,7 +109,8 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         // 获取表注释
         String remarks = introspectedTable.getRemarks();
         topLevelClass.addJavaDocLine("/**");
-        topLevelClass.addJavaDocLine(" * " + ((null!=remarks&&!remarks.trim().equals(""))? remarks:introspectedTable.getTableConfiguration().getTableName()) );
+        String tableName = (null != remarks && !remarks.trim().equals("")) ? remarks : introspectedTable.getTableConfiguration().getTableName();
+        topLevelClass.addJavaDocLine(" * " + tableName);
         topLevelClass.addJavaDocLine(" *");
 
         String dateTimeFormat = properties.getProperty("dateTimeFormat");
@@ -124,6 +125,15 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         topLevelClass.addJavaDocLine(" * @author " + author);
         topLevelClass.addJavaDocLine(" * @date " + dateFormatter.format(new Date()));
         topLevelClass.addJavaDocLine(" */");
+
+        String jpa = properties.getProperty("jpa");
+        if (jpa!=null && jpa.equals("true")){
+            String tableName0 = introspectedTable.getTableConfiguration().getTableName();
+            String schema = introspectedTable.getTableConfiguration().getSchema();
+            topLevelClass.addImportedType("javax.persistence.*");
+            topLevelClass.addJavaDocLine("@Entity");
+            topLevelClass.addJavaDocLine("@Table(name = \""+ tableName0 +"\", schema = \""+schema+"\", catalog = \"\")");
+        }
     }
 
     @Override
@@ -220,16 +230,37 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append(" * @return ");
         String actualColumnName = introspectedColumn.getActualColumnName();
+        String oldActualColumnName = introspectedColumn.getActualColumnName();
+        TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
         if (actualColumnName.equals("ID")){
             sb.append("id");
         }else {
-            TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
             if (isTrue(tableConfiguration
                     .getProperty(PropertyRegistry.TABLE_USE_ACTUAL_COLUMN_NAMES))) {
-                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
+                boolean isazAZ = actualColumnName.matches("^[a-zA-Z]+$");
+                boolean isAZ = actualColumnName.matches("^[A-Z]+$");
+                //如果是字母 并且不是全大写的情况
+                if (isazAZ && !isAZ){
+                    actualColumnName=
+                            JavaBeansUtil.getValidPropertyName(actualColumnName);
+                }else {//如果是下划线 并且是全大写的情况
+                    actualColumnName=
+                            JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                }
+//                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
             }else {
-                actualColumnName=
-                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                boolean isazAZ = actualColumnName.matches("^[a-zA-Z]+$");
+                boolean isAZ = actualColumnName.matches("^[A-Z]+$");
+                //如果是字母 并且不是全大写的情况
+                if (isazAZ && !isAZ){
+                    actualColumnName=
+                            JavaBeansUtil.getValidPropertyName(actualColumnName);
+                }else {//如果是下划线 并且是全大写的情况
+                    actualColumnName=
+                            JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                }
+//                actualColumnName=
+//                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
             }
             sb.append(actualColumnName);
         }
@@ -237,6 +268,17 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
         sb.append(" "+remarks);
         method.addJavaDocLine(sb.toString());
         method.addJavaDocLine(" */"); //$NON-NLS-1$
+        String jpa = properties.getProperty("jpa");
+        if (jpa!=null && jpa.equals("true")){
+            String column = tableConfiguration.getGeneratedKey().get().getColumn();
+            //是主键
+            if (oldActualColumnName.equals(column)){
+                method.addJavaDocLine("@Id");
+            }else {
+                method.addJavaDocLine("@Basic");
+            }
+            method.addJavaDocLine("@Column(name = \""+oldActualColumnName+"\")");
+        }
     }
     @Override
     public void addSetterComment(Method method,
@@ -259,10 +301,30 @@ public class MyCommentGenerator extends EmptyCommentGenerator {
             TableConfiguration tableConfiguration = introspectedTable.getTableConfiguration();
             if (isTrue(tableConfiguration
                     .getProperty(PropertyRegistry.TABLE_USE_ACTUAL_COLUMN_NAMES))) {
-                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
-            } else {
-                actualColumnName=
-                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                boolean isazAZ = actualColumnName.matches("^[a-zA-Z]+$");
+                boolean isAZ = actualColumnName.matches("^[A-Z]+$");
+                //如果是字母 并且不是全大写的情况
+                if (isazAZ && !isAZ){
+                    actualColumnName=
+                            JavaBeansUtil.getValidPropertyName(actualColumnName);
+                }else {//如果是下划线 并且是全大写的情况
+                    actualColumnName=
+                            JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                }
+//                actualColumnName=JavaBeansUtil.getValidPropertyName(actualColumnName);
+            }else {
+                boolean isazAZ = actualColumnName.matches("^[a-zA-Z]+$");
+                boolean isAZ = actualColumnName.matches("^[A-Z]+$");
+                //如果是字母 并且不是全大写的情况
+                if (isazAZ && !isAZ){
+                    actualColumnName=
+                            JavaBeansUtil.getValidPropertyName(actualColumnName);
+                }else {//如果是下划线 并且是全大写的情况
+                    actualColumnName=
+                            JavaBeansUtil.getCamelCaseString(actualColumnName, false);
+                }
+//                actualColumnName=
+//                        JavaBeansUtil.getCamelCaseString(actualColumnName, false);
             }
             sb.append(actualColumnName);
         }

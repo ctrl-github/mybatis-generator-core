@@ -39,6 +39,8 @@
             <property name="xml-author" value=""/> <!-- xml文件中作者名称 -->
             <property name="dateFormat" value="yyyy/MM/dd"/>
             <property name="dateTimeFormat" value="true"/> <!-- 是否对时间字段进行格式化  默认不格式化 -->
+
+            <property name="jpa" value="false"/> <!-- 是否混合 JPA -->
         </commentGenerator>
 
         <!-- jdbc的数据库连接 -->
@@ -80,7 +82,7 @@
         </javaClientGenerator>
 
         <!-- 设置数据库的表名和实体类名 -->
-        <table schema="" tableName="t_User" domainObjectName="User"
+        <table schema="schema" tableName="tb_user" domainObjectName="User"
                enableCountByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
@@ -94,9 +96,9 @@
             -->
             <property name="useActualColumnNames" value="true" />
             <!-- generatedKey用于生成生成主键的方法  identity true  <selectKey order="AFTER"> / false  <selectKey order="BEFORE"> -->
-            <generatedKey column="ID" sqlStatement="Mysql"  identity="true"/>
+            <generatedKey column="user_id" sqlStatement="Mysql"  identity="true"/>   <!-- 必须数据库声明主键 否则只能生成 insert方法 -->
             <!-- 指定列的java数据类型 -->
-            <columnOverride column="ID" property="id" javaType="Integer" />
+<!--            <columnOverride column="ID" property="id" javaType="Integer" />-->
         </table>
 
     </context>
